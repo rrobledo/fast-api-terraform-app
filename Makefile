@@ -1,3 +1,8 @@
+setup-env:
+	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+	sudo ln -sf ${HOME}/.poetry/bin/poetry /usr/bin/poetry
+	poetry install
+
 start:
 	poetry run honcho start -f Procfile.dev
 
