@@ -114,10 +114,10 @@ jobs:
     - name: Terraform Plan
       run: |
         cd terraform
-        terraform plan
+        terraform plan -var-file=dev.tfvars
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: |
         cd terraform
-        terraform apply -auto-approve
+        terraform apply -var-file=dev.tfvars -auto-approve
