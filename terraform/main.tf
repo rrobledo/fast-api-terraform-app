@@ -13,11 +13,11 @@ module "network" {
 }
 
 module "ecs" {
-  source               = "./modules/ecs"
+  source = "./modules/ecs"
 
   environment          = var.environment
   cluster              = var.environment
-  cloudwatch_prefix    = "${var.environment}"           #See ecs_instances module when to set this and when not!
+  cloudwatch_prefix    = var.environment #See ecs_instances module when to set this and when not!
   vpc_id               = module.network.vpc_id
   vpc_cidr             = var.vpc_cidr
   public_subnet_ids    = module.network.public_subnet_ids
@@ -41,26 +41,26 @@ module "ecs" {
 module "cognito" {
   source = "./modules/cognito"
 
-  environment          = var.environment
-  callback_urls        = var.identity_callback_urls
-  logout_urls          = var.identity_logout_urls
+  environment   = var.environment
+  callback_urls = var.identity_callback_urls
+  logout_urls   = var.identity_logout_urls
 }
 
 module "postgres" {
   source = "./modules/postgres"
 
-  environment          = var.environment
-  vpc_id               = module.network.vpc_id
-  allocated_storage    = 10
-  storage_type         = "gp2"
-  storage_encrypted    = false
+  environment                         = var.environment
+  vpc_id                              = module.network.vpc_id
+  allocated_storage                   = 10
+  storage_type                        = "gp2"
+  storage_encrypted                   = false
   iam_database_authentication_enabled = true
-  engine_version       = "9.6.9"
-  instance_class       = "db.t2.micro"
-  name                 = "challenge"
-  username             = "postgres"
-  password             = "postgres"
-  subnet_ids           = module.network.private_subnet_ids
+  engine_version                      = "9.6.9"
+  instance_class                      = "db.t2.micro"
+  name                                = "challenge"
+  username                            = "postgres"
+  password                            = "postgres"
+  subnet_ids                          = module.network.private_subnet_ids
 }
 
 resource "aws_key_pair" "ecs" {
