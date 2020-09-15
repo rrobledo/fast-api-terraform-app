@@ -1,83 +1,102 @@
-module "security-groups" {
-  source = "git@github.com:nexton-labs/infrastructure.git//modules/aws/vpc/security_groups"
-
-  vpc_id = local.vpc_id
+provider "aws" {
+  region = var.region
 }
 
-module "logs" {
-  source = "git@github.com:nexton-labs/infrastructure.git//modules/aws/cloudwatch"
-
-  app_name          = local.app_name
-  environment       = local.environment
-  resource          = "ecs"
-  retention_in_days = 7
+module "network" {
+  source               = "./modules/network"
+  environment          = var.environment
+  vpc_cidr             = var.vpc_cidr
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = var.availability_zones
+  depends_id           = ""
 }
 
-module "cluster" {
-  source = "git@github.com:nexton-labs/infrastructure.git//modules/aws/ecs"
+module "ecs" {
+  source               = "./modules/ecs"
 
-  app_name    = local.app_name
-  environment = local.environment
+  environment          = var.environment
+  cluster              = var.environment
+  cloudwatch_prefix    = "${var.environment}"           #See ecs_instances module when to set this and when not!
+  vpc_id               = module.network.vpc_id
+  vpc_cidr             = var.vpc_cidr
+  public_subnet_ids    = module.network.public_subnet_ids
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_ids   = module.network.private_subnet_ids
+  private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = var.availability_zones
+  max_size             = var.max_size
+  min_size             = var.min_size
+  desired_capacity     = var.desired_capacity
+  key_name             = aws_key_pair.ecs.key_name
+  instance_type        = var.instance_type
+  ecs_aws_ami          = var.ecs_aws_ami
+  depends_id           = module.network.depends_id
+
+  depends_on = [
+    module.network
+  ]
 }
 
-module "ecs-lb" {
-  source = "git@github.com:nexton-labs/infrastructure.git//modules/aws/lb/standard"
+module "cognito" {
+  source = "./modules/cognito"
 
-  name        = local.app_name
-  environment = local.environment
-
-  vpc_id      = local.vpc_id
-  subnet_ids  = local.subnet_ids
-  internal    = false
-  target_type = "ip"
-
-  certificate_arn = data.aws_acm_certificate.main.arn
-
-  health_check = {
-    enabled             = true
-    interval            = 30
-    port                = 80
-    protocol            = "HTTP"
-    path                = local.health_check_path
-    timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    matcher             = "200"
-  }
-
-  module_depends_on = [module.security-groups.groups_from_everywhere["HTTP"]]
+  environment          = var.environment
+  callback_urls        = var.identity_callback_urls
+  logout_urls          = var.identity_logout_urls
 }
 
-resource "aws_ecs_task_definition" "fastapi-task" {
-  family                   = local.app_name
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 256
-  memory                   = 512
-  container_definitions    = "[${local.container_definition}]"
-  execution_role_arn       = module.cluster.execution_role_arn
+module "postgres" {
+  source = "./modules/postgres"
+
+  environment          = var.environment
+  vpc_id               = module.network.vpc_id
+  allocated_storage    = 10
+  storage_type         = "gp2"
+  storage_encrypted    = false
+  iam_database_authentication_enabled = true
+  engine_version       = "9.6.9"
+  instance_class       = "db.t2.micro"
+  name                 = "challenge"
+  username             = "postgres"
+  password             = "postgres"
+  subnet_ids           = module.network.private_subnet_ids
 }
 
-resource "aws_ecs_service" "fastapi-service" {
-  name            = "${local.app_name}-${local.environment}"
-  cluster         = module.cluster.id
-  launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.fastapi-task.arn
-  desired_count   = 2
-
-  network_configuration {
-    subnets          = local.subnet_ids
-    security_groups  = [module.security-groups.groups_from_everywhere["HTTP"].id, module.security-groups.groups_all_to_everywhere.id]
-    assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = module.ecs-lb.target_group_arn
-    container_name   = "${local.app_name}-${local.environment}"
-    container_port   = 80
-  }
-
-  depends_on = [module.ecs-lb]
+resource "aws_key_pair" "ecs" {
+  key_name   = "ecs-key-${var.environment}"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtMljjj0Ccxux5Mssqraa/iHHxheW+m0Rh17fbd8t365y9EwBn00DN/0PjdU2CK6bjxwy8BNGXWoUXiSDDtGqRupH6e9J012yE5kxhpXnnkIcLGjkAiflDBVV4sXS4b3a2LSXL5Dyb93N2GdnJ03FJM4qDJ8lfDQxb38eYHytZkmxW14xLoyW5Hbyr3SXhdHC2/ecdp5nLNRwRWiW6g9OA6jTQ3LgeOZoM6dK4ltJUQOakKjiHsE+jvmO0hJYQN7+5gYOw0HHsM+zmATvSipAWzoWBWcmBxAbcdW0R0KvCwjylCyRVbRMRbSZ/c4idZbFLZXRb7ZJkqNJuy99+ld41 ecs@aws.fake"
 }
 
+variable "region" {}
+variable "vpc_cidr" {}
+variable "environment" {}
+variable "max_size" {}
+variable "min_size" {}
+variable "desired_capacity" {}
+variable "instance_type" {}
+variable "ecs_aws_ami" {}
 
+variable "private_subnet_cidrs" {
+  type = list
+}
+
+variable "public_subnet_cidrs" {
+  type = list
+}
+
+variable "availability_zones" {
+  type = list
+}
+
+variable "identity_callback_urls" {
+  type = list
+}
+
+variable "identity_logout_urls" {
+  type = list
+}
+
+output "default_alb_target_group" {
+  value = module.ecs.default_alb_target_group
+}

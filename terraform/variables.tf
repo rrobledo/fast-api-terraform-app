@@ -1,2 +1,0 @@
-variable "IMAGE_TAG" {
-}

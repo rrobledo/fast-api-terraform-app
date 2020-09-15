@@ -18,5 +18,7 @@ else:
     config = Config()
 
 DATABASE_URL: str = config("DATABASE_URL", cast=str, default="postgresql://")
-COGNITO_POOL_ID: str = config("COGNITO_POOL_ID", cast=str, default="fake-pool-id")
-COGNITO_REGION: str = config("COGNITO_REGION", cast=str, default="us-west-2")
+# fmt: off
+COGNITO_POOL_ID: str = config("COGNITO_POOL_ID", cast=str, default="us-east-1_otwxwdsOi")
+# fmt: on
+COGNITO_REGION: str = config("COGNITO_REGION", cast=str, default="us-east-1")

@@ -1,6 +1,6 @@
 # FastAPI Base
 
-Starter FastAPI project set up for CRUD APIs, using:
+Challenge FastAPI project set up for CRUD APIs, using:
 * SQLAlchemy for ORM
 * alembic for migrations
 * psycopg2 for Postgres connection
