@@ -3,7 +3,7 @@ from app.models.api.base import Base
 
 class UserBase(Base):
     """
-    Nexton user
+    User
     """
 
     username: str

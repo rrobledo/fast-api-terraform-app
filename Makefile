@@ -12,6 +12,9 @@ console:
 test:
 	poetry run python -m pytest -v tests
 
+coverage:
+	poetry run python -m pytest --cov app --cov-report=html:reports -v tests
+
 lint:
 	poetry run python -m black . --check
 	poetry run python -m pylint -j 0 app tests

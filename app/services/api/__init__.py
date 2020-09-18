@@ -1,3 +1,3 @@
 # type: ignore
-from .candidate import candidate_service
-from .job import job_service
+from .transaction import transaction_service
+from .product import product_service
