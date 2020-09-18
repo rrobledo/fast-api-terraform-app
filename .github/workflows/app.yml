@@ -114,7 +114,7 @@ jobs:
     - name: Terraform Plan
       run: |
         cd terraform
-        terraform plan -var-file=dev.tfvars
+        terraform plan
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
