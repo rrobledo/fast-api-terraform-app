@@ -23,6 +23,6 @@ DATABASE_URL: str = config(
     default="postgresql+psycopg2://postgres:postgres@localhost/challenge",
 )
 # fmt: off
-COGNITO_POOL_ID: str = config("COGNITO_POOL_ID", cast=str, default="us-east-1_otwxwdsOi")
+COGNITO_POOL_ID: str = config("COGNITO_POOL_ID", cast=str, default="us-east-1_NozQxDzdH")
 # fmt: on
 COGNITO_REGION: str = config("COGNITO_REGION", cast=str, default="us-east-1")

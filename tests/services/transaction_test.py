@@ -9,8 +9,14 @@ from app.models.orm.user import User
 
 def test_transaction_shall_be_success(db):
     # Create User
-    user = User(username="rrobledo", email="raul.osvaldo.robledo@gmail.com")
+    user = User(
+        id="77689aee-216c-4d50-ab21-e032191c0376",
+        username="rrobledo",
+        email="raul.osvaldo.robledo@gmail.com",
+    )
     db.add(user)
+    db.commit()
+    db.refresh(user)
 
     # Create Products
     prod_01 = ProductCreate(description="Product 01")

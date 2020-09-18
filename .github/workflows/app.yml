@@ -120,4 +120,4 @@ jobs:
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: |
         cd terraform
-        terraform apply -var-file=dev.tfvars -auto-approve
+        terraform apply -auto-approve
