@@ -22,3 +22,19 @@ class Base(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class RelationBase(BaseModel):
+    created_at: Optional[datetime.datetime] = Field(
+        ..., description="The datetime when this data model was created"
+    )
+    updated_at: Optional[datetime.datetime] = Field(
+        ..., description="The datetime when this data model was last updated"
+    )
+
+    @classmethod
+    def from_dict(cls, kwargs):
+        return cls(**kwargs)
+
+    class Config:
+        orm_mode = True

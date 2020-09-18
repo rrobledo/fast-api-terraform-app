@@ -15,7 +15,7 @@ def get_router() -> APIRouter:
 
     namespaces: typing.Dict[str, Namespace] = {
         "user": {
-            "resources": ["candidate", "job"],
+            "resources": ["products", "transactions"],
             "dependencies": [Depends(api_security.get_auth_user_id)],  # type: ignore
         },
     }

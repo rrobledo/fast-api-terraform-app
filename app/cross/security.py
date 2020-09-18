@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from starlette.status import HTTP_403_FORBIDDEN
+from typing import Any
 
 from app.settings.globals import COGNITO_POOL_ID, COGNITO_REGION
 from jose import jwt, jwk, JWTError
@@ -33,7 +34,7 @@ json_web_key_set = JWKS.parse_obj(
 class JWTAuthorizationCredentials(BaseModel):
     jwt_token: str
     header: Dict[str, str]
-    claims: Dict[str, str]
+    claims: Dict[str, Any]
     signature: str
     message: str
 
