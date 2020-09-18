@@ -15,6 +15,11 @@ from jose import jwt, jwk, JWTError
 from jose.utils import base64url_decode
 from starlette.requests import Request
 
+from app.db.session import Session
+from app.cross.db import get_db
+from app.repositories.user import user_repo
+from app.models.orm.user import User
+
 
 JWK = Dict[str, str]
 
@@ -97,8 +102,17 @@ auth = JWTBearer(json_web_key_set)
 
 async def get_auth_user_id(
     credentials: JWTAuthorizationCredentials = Depends(auth),
+    db: Session = Depends(get_db),
 ) -> str:
     try:
-        return credentials.claims["sub"]
+        user_id = credentials.claims["sub"]
+        username = credentials.claims["username"]
+        user = user_repo.find(db=db, model_id=user_id)
+        if not user:
+            user = User(id=user_id, username=username)
+            db.add(user)
+            db.commit()
+
+        return user_id
     except KeyError:
         HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Username missing")

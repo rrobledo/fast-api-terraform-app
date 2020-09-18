@@ -7,4 +7,4 @@ class User(ModelBase):
     __tablename__ = "users"
 
     username = sa.Column(sa.String(), unique=True, nullable=False)
-    email = sa.Column(sa.String(), unique=True, nullable=False)
+    email = sa.Column(sa.String(), unique=True, nullable=True)

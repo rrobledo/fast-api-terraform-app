@@ -5,8 +5,7 @@ from app.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
-    def update_user(self):
-        print("unimplemented yet")
+    pass
 
 
 user_repo = UserRepository(User)
