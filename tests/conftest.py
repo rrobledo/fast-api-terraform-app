@@ -19,6 +19,8 @@ def setup_test_db():
     TEST_DATABASE: str = g.config("TEST_DATABASE", cast=str, default="db_test")
 
     # Override global DATABASE_URL to point at test database
+    g.DATABASE_CONN_URL = PG_DATABASE_URL
+    g.DATABASE_NAME = TEST_DATABASE
     g.DATABASE_URL = f"{PG_DATABASE_URL}/{TEST_DATABASE}"
 
     pg_engine = create_engine(PG_DATABASE_URL)
