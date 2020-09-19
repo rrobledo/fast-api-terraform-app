@@ -17,10 +17,18 @@ if p.exists():
 else:
     config = Config()
 
-DATABASE_URL: str = config(
-    "DATABASE_URL",
+DATABASE_CONN_URL: str = config(
+    "DATABASE_CONN_URL",
     cast=str,
-    default="postgresql+psycopg2://postgres:postgres@localhost/challenge",
+    default="postgresql+psycopg2://postgres:postgres@localhost",
+)
+
+DATABASE_NAME: str = config(
+    "DATABASE_NAME", cast=str, default="challenge",
+)
+
+DATABASE_URL: str = config(
+    "DATABASE_URL", cast=str, default=f"{DATABASE_CONN_URL}/{DATABASE_NAME}",
 )
 # fmt: off
 COGNITO_POOL_ID: str = config("COGNITO_POOL_ID", cast=str, default="us-east-1_NozQxDzdH")

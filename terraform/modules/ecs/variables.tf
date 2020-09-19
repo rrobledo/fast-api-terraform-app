@@ -2,6 +2,14 @@ variable "environment" {
   description = "The name of the environment"
 }
 
+variable "app_name" {
+  description = "The name of the application"
+}
+
+variable "container_definition" {
+  description = "Service container definition"
+}
+
 variable "cluster" {
   default     = "default"
   description = "The name of the ECS cluster"
