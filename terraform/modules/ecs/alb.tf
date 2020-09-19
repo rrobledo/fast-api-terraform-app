@@ -6,6 +6,7 @@ module "alb" {
   instance_group    = var.instance_group
   alb_name          = "${var.environment}-${var.cluster}"
   vpc_id            = var.vpc_id
+  health_check_path = "/health"
   public_subnet_ids = var.public_subnet_ids
   autoscaling_group_id = module.ecs_instances.aws_autoscaling_group_id
 }
