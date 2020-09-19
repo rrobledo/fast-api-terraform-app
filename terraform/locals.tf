@@ -6,6 +6,10 @@ locals {
     "essential" = true
     "environment" : [
       {
+        name : "DATABASE_CONN_URL",
+        value : "postgresql+psycopg2://postgres:postgres@${module.postgres.db-endpoint}"
+      },
+      {
         name : "DATABASE_URL",
         value : "postgresql+psycopg2://postgres:postgres@${module.postgres.db-endpoint}/challenge"
       }
