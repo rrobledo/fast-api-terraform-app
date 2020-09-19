@@ -91,16 +91,15 @@ def run_migrations_online():
 
     conn = pg_engine.connect()
     conn.execute("COMMIT")
-    if database_exists(get_url()):
-        conn.execute(f"DROP DATABASE {get_database_name()}")
-    conn.execute("COMMIT")
-    conn.execute(f"CREATE DATABASE {get_database_name()}")
-    engine2 = create_engine(get_url(), echo=True)
-    conn2 = engine2.connect()
-    conn2.execute("COMMIT")
-    conn2.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-    conn2.close()
-    engine2.dispose()
+    if not database_exists(get_url()):
+        conn.execute(f"CREATE DATABASE {get_database_name()}")
+        engine2 = create_engine(get_url(), echo=True)
+        conn2 = engine2.connect()
+        conn2.execute("COMMIT")
+        conn2.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+        conn2.close()
+        engine2.dispose()
+    conn.close()
 
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_url()
