@@ -1,0 +1,2 @@
+variable "IMAGE_TAG" {
+}

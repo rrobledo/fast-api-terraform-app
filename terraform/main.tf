@@ -16,6 +16,8 @@ module "ecs" {
   source = "./modules/ecs"
 
   environment          = var.environment
+  app_name             = local.app_name
+  container_definition = local.container_definition
   cluster              = var.environment
   cloudwatch_prefix    = var.environment #See ecs_instances module when to set this and when not!
   vpc_id               = module.network.vpc_id
@@ -97,6 +99,6 @@ variable "identity_logout_urls" {
   type = list
 }
 
-output "default_alb_target_group" {
-  value = module.ecs.default_alb_target_group
+output "alb_target_group_arn" {
+  value = module.ecs.alb_target_group_arn
 }

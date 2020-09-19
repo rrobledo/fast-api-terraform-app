@@ -6,6 +6,9 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+from sqlalchemy import create_engine
+
+from sqlalchemy_utils import database_exists  # type: ignore
 
 
 def setup_base():
@@ -41,6 +44,18 @@ def get_url():
     return DATABASE_URL
 
 
+def get_conn_url():
+    from app.settings.globals import DATABASE_CONN_URL
+
+    return DATABASE_CONN_URL
+
+
+def get_database_name():
+    from app.settings.globals import DATABASE_NAME
+
+    return DATABASE_NAME
+
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -72,6 +87,21 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    pg_engine = create_engine(get_conn_url())
+
+    conn = pg_engine.connect()
+    conn.execute("COMMIT")
+    if database_exists(get_url()):
+        conn.execute(f"DROP DATABASE {get_database_name()}")
+    conn.execute("COMMIT")
+    conn.execute(f"CREATE DATABASE {get_database_name()}")
+    engine2 = create_engine(get_url(), echo=True)
+    conn2 = engine2.connect()
+    conn2.execute("COMMIT")
+    conn2.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+    conn2.close()
+    engine2.dispose()
+
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
