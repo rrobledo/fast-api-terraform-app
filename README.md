@@ -21,7 +21,7 @@ Deploy:
 ## API Usage:
 
 **API Endpoint**: http://dev-dev-2008722471.us-east-1.elb.amazonaws.com  
-**API documentation**: http://dev-dev-2008722471.us-east-1.elb.amazonaws.com/doc
+**API documentation**: http://dev-dev-2008722471.us-east-1.elb.amazonaws.com/docs
 
 In order to use the Rest API, you need to generate a JWT Token from Amazon Cognito:
 
