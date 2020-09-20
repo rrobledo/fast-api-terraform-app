@@ -19,7 +19,3 @@ desired_capacity = 2
 instance_type = "t2.micro"
 
 ecs_aws_ami = "ami-275ffe31"
-
-identity_callback_urls = ["http://localhost/callback"]
-
-identity_logout_urls = ["http://localhost/signout"]

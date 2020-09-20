@@ -44,8 +44,8 @@ module "cognito" {
   source = "./modules/cognito"
 
   environment   = var.environment
-  callback_urls = var.identity_callback_urls
-  logout_urls   = var.identity_logout_urls
+  callback_urls = ["https://rrobledo.htmlsave.net/callback.html"]
+  logout_urls   = ["https://rrobledo.htmlsave.net/callback.html"]
 }
 
 module "postgres" {
@@ -88,14 +88,6 @@ variable "public_subnet_cidrs" {
 }
 
 variable "availability_zones" {
-  type = list
-}
-
-variable "identity_callback_urls" {
-  type = list
-}
-
-variable "identity_logout_urls" {
   type = list
 }
 
