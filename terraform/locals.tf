@@ -14,6 +14,14 @@ locals {
         value : "postgresql+psycopg2://postgres:postgres@${module.postgres.db-endpoint}/challenge"
       }
     ]
+    "logConfiguration" : {
+      "logDriver" : "awslogs",
+      "options" : {
+        "awslogs-group" : module.ecs.aws_cloudwatch_log_group_docker,
+        "awslogs-region" : var.region,
+        "awslogs-stream-prefix" : "challenge"
+      }
+    }
     "portMappings" = [{
       hostPort      = 80,
       protocol      = "tcp",
