@@ -14,3 +14,12 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  challenge:
+    image: challenge
+    restart: always
+    environment:
+      DATABASE_CONN_URL: postgresql+psycopg2://postgres:postgres@db
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db/challenge
+    ports:
+      - 80:80
