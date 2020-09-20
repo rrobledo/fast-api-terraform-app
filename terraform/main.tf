@@ -57,7 +57,7 @@ module "postgres" {
   storage_type                        = "gp2"
   storage_encrypted                   = false
   iam_database_authentication_enabled = true
-  engine_version                      = "9.6.9"
+  engine_version                      = "9.6.11"
   instance_class                      = "db.t2.micro"
   name                                = "challenge"
   username                            = "postgres"
